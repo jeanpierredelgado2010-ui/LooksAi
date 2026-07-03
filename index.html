@@ -188,6 +188,7 @@
             overflow: hidden;
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
+        [data-theme="light"] .glass-container { border-color: var(--text-main); }
 
         .glass-fluid {
             position: absolute;
@@ -230,7 +231,7 @@
             font-size: 16px;
             font-weight: bold;
         }
-        [data-theme="light"] .setting-item input[type="number"] { background: rgba(0,0,0,0.05); }
+        [data-theme="light"] .setting-item input[type="number"] { background: rgba(0,0,0,0.05); color: var(--text-main); }
 
         .theme-switch {
             display: flex;
@@ -342,8 +343,8 @@
         /* ELEMENTOS GENERALES */
         .btn-main-action {
             width: 100%;
-            background-color: #a855f7;
-            color: white;
+            background-color: #c084fc;
+            color: black;
             font-weight: 700;
             padding: 16px;
             border: none;
@@ -397,7 +398,7 @@
                     </div>
                 </div>
 
-                <button class="btn-main-action" style="background-color: #c084fc; color: #000;">🏳️ Archivar Métricas</button>
+                <button class="btn-main-action">🏳️ Archivar Métricas</button>
                 <button class="btn-secondary-action" style="margin-top: 8px;">🔄 Actualizar Foto / Nuevo Escaneo</button>
             </div>
         </main>
@@ -454,7 +455,6 @@
                 <h2>Masaje Facial Escultor</h2>
             </div>
             
-            <!-- GUÍA VISUAL CON ICONOS E IMÁGENES INTEGRADAS -->
             <div class="massage-visuals">
                 <div class="massage-img"><span>📐</span>Mandíbula<br>(Drenaje hacia oreja)</div>
                 <div class="massage-img"><span>💆</span>Pómulos<br>(Ascendente oblicuo)</div>
@@ -467,14 +467,14 @@
         </div>
     </div>
 
-    <!-- SCRIPTS CONFIGURADOS E INTEGRADOS -->
+    <!-- SCRIPTS ENLAZADOS CORRECTAMENTE AL ENTORNO GLOBAL WINDOW -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { GoogleGenAI } from "https://esm.run/@google/genai";
 
-        // Firebase config optimizada y corregida
+        // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyCiWB0_YUk_Ug2amavoATZ3BQ4C1J6Rh80",
             authDomain: "looksai-da317.firebaseapp.com",
@@ -488,34 +488,33 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Clave e Instancia Gemini
+        // Instancia Gemini
         const API_KEY = "AQ.Ab8RN6JrYB9krnwQNsua1mzUwr4SnG9Ur06Z3Y2pI7TXjVs9fQ";
         const ai = new GoogleGenAI({ apiKey: API_KEY });
 
-        // VARIABLES DE CONTROL LOCAL
+        // Variables locales de control
         let currentWater = 0;
         let waterGoal = 10;
 
-        // SIDEBAR & MODALES
+        // PUENTE GLOBAL: Mapeamos explícitamente las funciones a 'window' para que funcionen los 'onclick' del HTML
         window.toggleSidebar = function() {
             document.getElementById('sidebar-menu').classList.toggle('active');
-        }
+        };
 
         window.openModal = function(id) {
             document.getElementById(id).classList.add('active');
-        }
+        };
 
         window.closeModal = function(id) {
             document.getElementById(id).classList.remove('active');
-        }
+        };
 
-        // AGUA INTERACTIVA COMPORTAMIENTO
         window.drinkWater = function() {
             if (currentWater < waterGoal) {
                 currentWater++;
                 updateWaterUI();
             }
-        }
+        };
 
         window.updateWaterGoal = function() {
             const inputVal = parseInt(document.getElementById('input-water-goal').value);
@@ -524,15 +523,8 @@
                 if (currentWater > waterGoal) currentWater = waterGoal;
                 updateWaterUI();
             }
-        }
+        };
 
-        function updateWaterUI() {
-            document.getElementById('water-label').innerText = `${currentWater} / ${waterGoal} Vasos`;
-            const percentage = (currentWater / waterGoal) * 100;
-            document.getElementById('glass-water-level').style.height = `${percentage}%`;
-        }
-
-        // CONTROL DE TEMA FUNCIONAL (CLARO / OSCURO)
         window.toggleTheme = function() {
             const isDark = document.getElementById('theme-toggle').checked;
             if (isDark) {
@@ -540,9 +532,14 @@
             } else {
                 document.documentElement.setAttribute('data-theme', 'light');
             }
+        };
+
+        function updateWaterUI() {
+            document.getElementById('water-label').innerText = `${currentWater} / ${waterGoal} Vasos`;
+            const percentage = (currentWater / waterGoal) * 100;
+            document.getElementById('glass-water-level').style.height = `${percentage}%`;
         }
 
-        // CONSULTA REESTRUCTURADA E IMPERATIVA PARA LA IA (JINPACHI EGO STYLE)
         window.consultarIA = async function(tipo) {
             const outputBox = document.getElementById(`res-${tipo}`);
             outputBox.classList.remove('hidden');
@@ -555,4 +552,4 @@
                 promptBase += `El usuario tiene estos materiales e ingredientes para comer: "${mat}". Dale órdenes tajantes de qué comida preparar paso a paso para maximizar masa muscular o mantener definición sin sodio dañino.`;
             } else if (tipo === 'skincare') {
                 const mat = document.getElementById('skincare-materials').value;
-                promptBase += `El usuario dispone de estos productos de
+                promptBase += `El usuario dispone de estos productos de skincare: "${mat}". Dictamina el orden estricto de aplicación en una rutina sin rodeos innecesa
