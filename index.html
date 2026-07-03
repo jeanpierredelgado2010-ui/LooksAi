@@ -409,6 +409,7 @@
 
     <div class="app-container">
         
+        <!-- PANTALLA 1: AUTENTICACIÓN -->
         <div id="win-auth" class="route-window active">
             <div class="auth-container">
                 <div class="auth-title" id="auth-title">CREAR CUENTA</div>
@@ -430,6 +431,7 @@
             </div>
         </div>
 
+        <!-- PANTALLA 2: DASHBOARD -->
         <div id="win-dashboard" class="route-window">
             <header>
                 <div class="logo">LOOKSAI</div>
@@ -461,6 +463,7 @@
             </main>
         </div>
 
+        <!-- SIDEBAR -->
         <div class="sidebar" id="sidebar-menu">
             <div class="sidebar-header">
                 <h3>Ajustes</h3>
@@ -481,6 +484,7 @@
             </div>
         </div>
 
+        <!-- MODALS -->
         <div class="modal-window" id="modal-alimentacion">
             <div class="modal-header">
                 <button class="back-btn" onclick="closeModal('modal-alimentacion')">←</button>
@@ -519,14 +523,14 @@
         </div>
     </div>
 
+    <!-- CONTROL JAVASCRIPT GLOBAL EXPUESTO -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DE FIREBASE TOTALMENTE RECONSTRUIDA Y CORREGIDA DESDE TU CAPTURA
         const firebaseConfig = {
-            apiKey: "AIzaSyCiWB0_YUk_Ug2amavoATZ3BQ4C1J6Rh80"
+            apiKey: "AIzaSyCiWB0_YUk_Ug2amavoATZ3BQ4C1J6Rh80",
             authDomain: "looksai-da317.firebaseapp.com",
             projectId: "looksai-da317",
             storageBucket: "looksai-da317.firebasestorage.app",
@@ -542,6 +546,7 @@
 
         let isSignUpMode = true;
 
+        // SE EXTIENDEN LAS FUNCIONES AL CONTEXTO GLOBAL 'WINDOW' PARA QUE EL HTML LAS DETECTE
         window.toggleAuthMode = function() {
             isSignUpMode = !isSignUpMode;
             const title = document.getElementById('auth-title');
@@ -561,5 +566,18 @@
 
         window.handleAuthSubmit = async function() {
             const email = document.getElementById('auth-email').value.trim();
-            const password = document.getElementById('auth-password').
-                
+            const password = document.getElementById('auth-password').value;
+
+            if (!email || !password) {
+                alert("Por favor, completa todos los campos.");
+                return;
+            }
+
+            try {
+                if (isSignUpMode) {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    alert("¡Cuenta creada exitosamente!");
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+            
