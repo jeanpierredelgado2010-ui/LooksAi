@@ -12,6 +12,7 @@
             --card-bg: #0b0d13;
             --accent-ai: #c084fc;
             --accent-water: #3b82f6;
+            --accent-gym: #ef4444;
             --accent-success: #10b981;
             --text-main: #ffffff;
             --text-muted: #64748b;
@@ -24,6 +25,7 @@
             --card-bg: #ffffff;
             --accent-ai: #a855f7;
             --accent-water: #2563eb;
+            --accent-gym: #dc2626;
             --accent-success: #059669;
             --text-main: #0f172a;
             --text-muted: #64748b;
@@ -149,31 +151,265 @@
             outline: none;
         }
 
-        .action-button-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .btn-panel {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 16px;
-            color: var(--text-main);
-            font-weight: 600;
-            font-size: 16px;
-            text-align: left;
+        .habit-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
-            transition: transform 0.1s, background-color 0.2s;
+            padding: 14px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 10px;
         }
-        [data-theme="light"] .btn-panel { background: rgba(0, 0, 0, 0.02); }
 
-        .btn-panel:active { transform: scale(0.98); }
-        .
+        .btn-main-action {
+            width: 100%;
+            background-color: #c084fc;
+            color: black;
+            font-weight: 700;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .btn-secondary-action {
+            width: 100%;
+            background-color: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-weight: 600;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .water-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .water-drop {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 0;
+            text-align: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.2s;
+        }
+        .water-drop.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--accent-water);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100%;
+            background-color: var(--card-bg);
+            border-left: 1px solid var(--border-color);
+            z-index: 200;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 20px;
+        }
+        .sidebar.active { right: 0; }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
         
+        <div id="win-auth" class="route-window active">
+            <div class="auth-container">
+                <div class="auth-title" id="auth-title">CREAR CUENTA</div>
+                
+                <div class="card">
+                    <div class="input-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="auth-email" class="input-field" placeholder="ejemplo@correo.com">
+                    </div>
+                    <div class="input-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="auth-password" class="input-field" placeholder="••••••••">
+                    </div>
+                    
+                    <button class="btn-main-action" id="btn-auth-submit">REGISTRARSE</button>
+                    <p style="text-align: center; font-size: 14px; cursor: pointer; color: var(--accent-ai); margin-top: 10px;" id="auth-toggle-text">¿Ya tienes cuenta? Inicia Sesión</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="win-ajuste" class="route-window">
+            <header>
+                <div class="logo">LOOKSAI</div>
+                <button class="menu-btn" id="btn-menu-toggle">☰</button>
+            </header>
+
+            <main>
+                <div class="card">
+                    <div class="card-title">🎯 Plan de Ajuste Estético</div>
+                    
+                    <div class="habit-row">
+                        <span>😈 Masaje Facial</span>
+                        <input type="checkbox" id="chk-masaje">
+                    </div>
+                    <div class="habit-row">
+                        <span>☀️ Skincare</span>
+                        <input type="checkbox" id="chk-skincare">
+                    </div>
+                    <div class="habit-row">
+                        <span>🥗 Cero Sodio</span>
+                        <input type="checkbox" id="chk-sodio">
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <span id="water-label" style="font-weight: bold;">0 / 10 Vasos</span>
+                        <div class="water-grid" id="water-drops-container">
+                            <div class="water-drop" data-index="1">💧</div>
+                            <div class="water-drop" data-index="2">💧</div>
+                            <div class="water-drop" data-index="3">💧</div>
+                            <div class="water-drop" data-index="4">💧</div>
+                            <div class="water-drop" data-index="5">💧</div>
+                        </div>
+                    </div>
+
+                    <button class="btn-main-action" style="margin-top: 15px;">🏳️ Archivar Métricas</button>
+                    <button class="btn-secondary-action" style="margin-top: 8px;">🔄 Actualizar Foto / Nuevo Escaneo</button>
+                    <button class="btn-secondary-action" id="btn-logout" style="margin-top: 8px; background-color: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444;">Cerrar Sesión</button>
+                </div>
+            </main>
+        </div>
+
+        <div class="sidebar" id="sidebar-menu">
+            <div class="sidebar-header">
+                <h3>Ajustes</h3>
+                <button class="close-btn" id="btn-close-sidebar">✕</button>
+            </div>
+            <div style="margin-top: 20px;">
+                <p style="font-size: 14px; color: var(--text-muted);">LooksAI Dashboard activo.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCiWB0_YUk_Ug2amavoATZ3BQ4C1J6Rh80",
+            authDomain: "looksai-da317.firebaseapp.com",
+            projectId: "looksai-da317",
+            storageBucket: "looksai-da317.firebasestorage.app",
+            messagingSenderId: "39982623248",
+            appId: "1:39982623248:web:bc1684564c8d7ba1571d15"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let isSignUpMode = true;
+        let currentWater = 0;
+        const waterGoal = 10;
+
+        // Gestión del modo de autenticación
+        const toggleAuthMode = () => {
+            isSignUpMode = !isSignUpMode;
+            const title = document.getElementById('auth-title');
+            const submitBtn = document.getElementById('btn-auth-submit');
+            const toggleText = document.getElementById('auth-toggle-text');
+
+            if (isSignUpMode) {
+                title.innerText = "CREAR CUENTA";
+                submitBtn.innerText = "REGISTRARSE";
+                toggleText.innerText = "¿Ya tienes cuenta? Inicia Sesión";
+            } else {
+                title.innerText = "INICIAR SESIÓN";
+                submitBtn.innerText = "INGRESAR";
+                toggleText.innerText = "¿No tienes cuenta? Regístrate";
+            }
+        };
+
+        const handleAuthSubmit = async () => {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+
+            if (!email || !password) {
+                alert("Por favor, rellena todos los campos.");
+                return;
+            }
+
+            try {
+                if (isSignUpMode) {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    alert("Registro completado con éxito.");
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        };
+
+        // Escucha del estado de autenticación de Firebase
+        onAuthStateChanged(auth, (user) => {
+            const authWin = document.getElementById('win-auth');
+            const ajusteWin = document.getElementById('win-ajuste');
+
+            if (user) {
+                authWin.classList.remove('active');
+                ajusteWin.classList.add('active');
+            } else {
+                ajusteWin.classList.remove('active');
+                authWin.classList.add('active');
+            }
+        });
+
+        // Eventos Asignados por Código para Evitar Fallos de Scope
+        document.getElementById('auth-toggle-text').addEventListener('click', toggleAuthMode);
+        document.getElementById('btn-auth-submit').addEventListener('click', handleAuthSubmit);
+        document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+
+        // Control del Sidebar de Opciones
+        const toggleSidebar = () => document.getElementById('sidebar-menu').classList.toggle('active');
+        document.getElementById('btn-menu-toggle').addEventListener('click', toggleSidebar);
+        document.getElementById('btn-close-sidebar').addEventListener('click', toggleSidebar);
+
+        // Control de los selectores de agua táctiles
+        const drops = document.querySelectorAll('.water-drop');
+        drops.forEach(drop => {
+            drop.addEventListener('click', (e) => {
+                e.target.classList.toggle('active');
+                const activos = document.querySelectorAll('.water-drop.active').length;
+                document.getElementById('water-label').innerText = `${activos} / ${waterGoal} Vasos`;
+            });
+        });
+    </script>
+</body>
+</html>
