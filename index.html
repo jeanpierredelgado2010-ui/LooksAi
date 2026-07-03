@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LooksAI</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,301 +12,547 @@
             --card-bg: #0b0d13;
             --accent-ai: #c084fc;
             --accent-water: #3b82f6;
-            --accent-gym: #ef4444;
             --accent-success: #10b981;
             --text-main: #ffffff;
             --text-muted: #64748b;
             --border-color: #1e293b;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --accent-ai: #a855f7;
+            --accent-water: #2563eb;
+            --accent-success: #059669;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            margin: 0; padding: 0;
-            overflow-x: hidden; min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            justify-content: center;
         }
 
-        .selfie-bg-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background-image: linear-gradient(to bottom, rgba(5, 6, 8, 0.85), rgba(5, 6, 8, 0.98)), url('https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600');
-            background-size: cover; background-position: center; opacity: 0.15;
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
         }
 
-        .main-content { padding: 16px; display: flex; flex-direction: column; align-items: center; width: 100%; }
-        .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 60px; }
-
-        header h1 {
-            font-size: 1.8rem; margin: 15px 0 5px 0; font-weight: 900; text-align: center; letter-spacing: 2px;
-            text-transform: uppercase; background: linear-gradient(45deg, #ffffff, var(--accent-ai));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 10px 0;
         }
 
-        .card { background-color: var(--card-bg); border-radius: 24px; padding: 22px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
-        .card h2 { font-size: 0.85rem; margin-top: 0; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); font-weight: 700; }
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--text-main);
+        }
 
-        .auth-input { width: 100%; padding: 14px; background: #151922; border: 1px solid var(--border-color); border-radius: 12px; color: white; margin-bottom: 12px; font-size: 0.95rem; outline: none; }
-        .auth-input:focus { border-color: var(--accent-ai); }
-        .auth-toggle-text { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 14px; cursor: pointer; }
-        .auth-toggle-text span { color: var(--accent-ai); font-weight: bold; }
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+        }
 
-        .photo-container { width: 100%; background: rgba(21, 25, 34, 0.6); border: 2px dashed #334155; border-radius: 16px; padding: 40px 20px; text-align: center; position: relative; overflow: hidden; }
-        .preview-img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; display: none; position: relative; z-index: 1; }
-        .upload-placeholder { display: flex; flex-direction: column; align-items: center; gap: 10px; color: #94a3b8; pointer-events: none; }
-        #file-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; }
+        /* MENU DESPLEGABLE */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100%;
+            background-color: var(--card-bg);
+            border-left: 1px solid var(--border-color);
+            z-index: 100;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 20px;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+        }
 
-        .btn { color: white; border: none; padding: 16px 20px; border-radius: 14px; font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; }
-        .btn-ai { background-color: #7c3aed; margin-top: 16px; }
-        .btn-save-progress { background-color: var(--accent-success); margin-top: 14px; display: none; }
+        .sidebar.active { right: 0; }
 
-        .ai-response { margin-top: 16px; padding: 16px; background: rgba(124, 58, 237, 0.08); border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 14px; font-size: 0.95rem; line-height: 1.5; display: none; color: #e2e8f0; white-space: pre-wrap; }
-        .ai-response b { color: #ffffff; font-weight: 800; display: block; margin-top: 12px; margin-bottom: 4px; font-size: 1rem; }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
 
-        .route-window { display: none; }
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+        }
 
-        /* AGUA */
-        .water-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 8px; }
-        .water-glass { background: #151922; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 0; text-align: center; font-size: 1.3rem; cursor: pointer; }
-        .water-glass.active { background: rgba(59, 130, 246, 0.2); border-color: var(--accent-water); }
+        /* CARD PRINCIPAL */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
 
-        /* CHECKLIST */
-        .checklist-container { display: flex; flex-direction: column; gap: 8px; }
-        .check-item { display: flex; align-items: center; justify-content: space-between; background: #151922; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border-color); }
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-        /* CRONOLOGÍA */
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
-        .calendar-day { background: #151922; border: 1px solid var(--border-color); aspect-ratio: 1; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 0.85rem; cursor: pointer; }
-        .calendar-day.has-data { border-color: var(--accent-ai); }
-        .calendar-day .score-tag { font-size: 0.65rem; color: var(--accent-success); font-weight: bold; }
+        /* BOTONES DE AJUSTE */
+        .action-button-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
 
-        /* MENU SIDEBAR */
-        .sidebar-toggle { position: fixed; right: 12px; top: 20px; z-index: 100; background: var(--card-bg); border: 1px solid var(--border-color); width: 44px; height: 44px; border-radius: 12px; display: none; justify-content: center; align-items: center; font-size: 1.2rem; cursor: pointer; }
-        .sidebar-drawer { position: fixed; top: 0; right: -260px; width: 250px; height: 100%; background-color: #0b0d13; border-left: 1px solid var(--border-color); z-index: 99; transition: right 0.3s ease; padding: 80px 20px 20px 20px; display: flex; flex-direction: column; gap: 12px; }
-        .sidebar-drawer.open { right: 0; }
-        .nav-option { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #151922; border: 1px solid transparent; border-radius: 14px; cursor: pointer; font-weight: 600; }
-        .nav-option.active { border-color: var(--accent-ai); color: var(--accent-ai); }
-        .update-photo-section { margin-top: 24px; padding-top: 18px; border-top: 1px dashed var(--border-color); }
+        .btn-panel {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 16px;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        [data-theme="light"] .btn-panel { background: rgba(0, 0, 0, 0.02); }
+
+        .btn-panel:active { transform: scale(0.98); }
+        .btn-panel::after { content: "→"; color: var(--text-muted); font-weight: bold; }
+
+        /* AGUA INTERACTIVA */
+        .water-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px 0;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .water-counter {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .glass-container {
+            width: 90px;
+            height: 120px;
+            border: 4px solid var(--text-main);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .glass-fluid {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(180deg, #60a5fa 0%, var(--accent-water) 100%);
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-reflection {
+            position: absolute;
+            top: 10px;
+            left: 8px;
+            width: 6px;
+            height: 80%;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            pointer-events: none;
+        }
+
+        /* AJUSTES DENTRO DEL MENU */
+        .setting-item {
+            margin-bottom: 25px;
+        }
+        .setting-item label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .setting-item input[type="number"] {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        [data-theme="light"] .setting-item input[type="number"] { background: rgba(0,0,0,0.05); }
+
+        .theme-switch {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.03);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+        [data-theme="light"] .theme-switch { background: rgba(0,0,0,0.02); }
+
+        /* VENTANAS MODALES INTERNAS */
+        .modal-window {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            z-index: 150;
+            display: none;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .modal-window.active { display: block; }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .input-box {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            margin-bottom: 15px;
+            resize: none;
+            height: 100px;
+        }
+
+        /* IMPERATIVO BOTON */
+        .btn-action {
+            width: 100%;
+            background-color: var(--accent-ai);
+            color: #000000;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-action:active { transform: scale(0.99); }
+
+        .ai-response-box {
+            margin-top: 20px;
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed var(--border-color);
+            border-radius: 14px;
+            padding: 15px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        [data-theme="light"] .ai-response-box { background: rgba(0,0,0,0.01); }
+
+        /* DISEÑO DE IMÁGENES MASAJES */
+        .massage-visuals {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .massage-img {
+            width: 100%;
+            height: 110px;
+            background-color: #1e293b;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            padding: 5px;
+        }
+        .massage-img span { font-size: 24px; margin-bottom: 4px; }
+
+        /* ELEMENTOS GENERALES */
+        .btn-main-action {
+            width: 100%;
+            background-color: #a855f7;
+            color: white;
+            font-weight: 700;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+        .btn-secondary-action {
+            width: 100%;
+            background-color: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-weight: 600;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        [data-theme="light"] .btn-secondary-action { background: rgba(0,0,0,0.05); }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="selfie-bg-overlay"></div>
-<div class="sidebar-toggle" id="menu-btn" onclick="toggleSidebar()">☰</div>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header>
+            <div class="logo">LOOKSAI</div>
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        </header>
 
-<div class="sidebar-drawer" id="sidebar">
-    <div class="nav-option" id="opt-plan" onclick="navigateTo('plan')"><span>🎯</span><span>Plan de Ajuste</span></div>
-    <div class="nav-option" id="opt-inicio" onclick="navigateTo('inicio')"><span>📸</span><span>Escanear Rostro</span></div>
-    <div class="nav-option" id="opt-cronologia" onclick="navigateTo('cronologia')"><span>📈</span><span>Cronología</span></div>
-    <div class="nav-option" style="margin-top: auto; border-color: var(--accent-gym);" onclick="logoutUser()"><span>🚪</span><span>Cerrar Sesión</span></div>
-</div>
-
-<div class="app-layout">
-    <div class="main-content">
-        <div class="app-container">
-            <header><h1>LooksAI</h1></header>
-
-            <!-- VENTANA: LOGIN / REGISTRO CLOUD -->
-            <div id="win-auth" class="route-window" style="display: block;">
-                <div class="card">
-                    <h2 id="auth-title">Iniciar Sesión</h2>
-                    <input type="email" id="auth-email" class="auth-input" placeholder="Correo electrónico">
-                    <input type="password" id="auth-password" class="auth-input" placeholder="Contraseña">
-                    <button class="btn" style="background-color: var(--accent-ai);" id="btn-auth-submit" onclick="handleAuth()">Entrar</button>
-                    <p class="auth-toggle-text" id="auth-toggle" onclick="toggleAuthMode()">¿No tienes cuenta? <span>Regístrate aquí</span></p>
+        <!-- DASHBOARD PRINCIPAL -->
+        <main id="dashboard">
+            <div class="card">
+                <div class="card-title">🎯 Plan de Ajuste Estético</div>
+                
+                <div class="action-button-list">
+                    <button class="btn-panel" onclick="openModal('modal-alimentacion')">🥗 Alimentación Eficiente</button>
+                    <button class="btn-panel" onclick="openModal('modal-skincare')">☀️ Skincare de Alto Impacto</button>
+                    <button class="btn-panel" onclick="openModal('modal-masaje')">💆 Masaje Facial Escultor</button>
                 </div>
-            </div>
 
-            <!-- VENTANA: PLAN DE AJUSTE ESTÉTICO -->
-            <div id="win-plan" class="route-window">
-                <div class="card">
-                    <h2>🎯 Plan de Ajuste Estético</h2>
-                    <div class="checklist-container">
-                        <label class="check-item"><span>💆 Masaje Facial</span><input type="checkbox" id="chk-1"></label>
-                        <label class="check-item"><span>☀️ Skincare</span><input type="checkbox" id="chk-2"></label>
-                        <label class="check-item"><span>🥗 Cero Sodio</span><input type="checkbox" id="chk-3"></label>
-                    </div>
-                    <br>
-                    <label id="water-count-txt">0 / 10 Vasos</label>
-                    <div class="water-grid">
-                        <div class="water-glass" onclick="toggleWater(1)">💧</div>
-                        <div class="water-glass" onclick="toggleWater(2)">💧</div>
-                        <div class="water-glass" onclick="toggleWater(3)">💧</div>
-                        <div class="water-glass" onclick="toggleWater(4)">💧</div>
-                        <div class="water-glass" onclick="toggleWater(5)">💧</div>
-                    </div>
-                    <br>
-                    <button class="btn" style="background-color:var(--accent-ai);" onclick="finalizeDayMetrics()">🏁 Archivar Métricas</button>
-
-                    <div class="update-photo-section">
-                        <button class="btn" style="background-color: #1e293b; border: 1px solid #334155;" onclick="navigateTo('inicio')">🔄 Actualizar Foto / Nuevo Escaneo</button>
+                <!-- AGUA INTERACTIVA -->
+                <div class="water-section">
+                    <div class="water-counter" id="water-label">0 / 10 Vasos</div>
+                    <div class="glass-container" onclick="drinkWater()">
+                        <div class="glass-fluid" id="glass-water-level"></div>
+                        <div class="glass-reflection"></div>
                     </div>
                 </div>
+
+                <button class="btn-main-action" style="background-color: #c084fc; color: #000;">🏳️ Archivar Métricas</button>
+                <button class="btn-secondary-action" style="margin-top: 8px;">🔄 Actualizar Foto / Nuevo Escaneo</button>
+            </div>
+        </main>
+
+        <!-- AJUSTES (SIDEBAR) -->
+        <div class="sidebar" id="sidebar-menu">
+            <div class="sidebar-header">
+                <h3>Ajustes</h3>
+                <button class="close-btn" onclick="toggleSidebar()">✕</button>
+            </div>
+            
+            <div class="setting-item">
+                <label>Meta diaria de agua (Vasos)</label>
+                <input type="number" id="input-water-goal" value="10" min="1" onchange="updateWaterGoal()">
             </div>
 
-            <!-- VENTANA: ESCANEAR FOTO -->
-            <div id="win-inicio" class="route-window">
-                <div class="card">
-                    <h2>Escanear Rostro</h2>
-                    <div class="photo-container">
-                        <input type="file" id="file-input" accept="image/*" onchange="loadPhoto(event)">
-                        <img id="preview" class="preview-img" alt="Tu Selfie">
-                        <div id="placeholder" class="upload-placeholder">
-                            <span>📸</span><strong>Tómate una Selfie para Escanear</strong>
-                        </div>
-                    </div>
-                    <button class="btn btn-ai" id="btn-scan" onclick="analyzePhotoWithAI()">✨ Comenzar Escaneo</button>
-                    <div id="ai-output" class="ai-response"></div>
-                    <button class="btn btn-save-progress" id="btn-save-progress" onclick="saveProgressAndGo()">💾 Guardar Progreso e Ir al Plan</button>
+            <div class="setting-item">
+                <label>Apariencia visual</label>
+                <div class="theme-switch">
+                    <span>Modo Oscuro</span>
+                    <input type="checkbox" id="theme-toggle" checked onchange="toggleTheme()">
                 </div>
             </div>
+        </div>
 
-            <!-- VENTANA: CRONOLOGÍA -->
-            <div id="win-cronologia" class="route-window">
-                <div class="card">
-                    <h2>📅 Historial de Evolución</h2>
-                    <div class="calendar-grid" id="calendar-element"></div>
-                </div>
+        <!-- MODAL: ALIMENTACION -->
+        <div class="modal-window" id="modal-alimentacion">
+            <div class="modal-header">
+                <button class="back-btn" onclick="closeModal('modal-alimentacion')">←</button>
+                <h2>Alimentación Eficiente</h2>
+            </div>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 12px;">Escribe los insumos o ingredientes que tienes disponibles en este momento:</p>
+            <textarea class="input-box" id="diet-materials" placeholder="Ej: Pechuga de pollo, arroz, huevos, aguacate..."></textarea>
+            <button class="btn-action" onclick="consultarIA('alimentacion')">Generar Comida Saludable</button>
+            <div class="ai-response-box hidden" id="res-alimentacion">Generando ordenes precisas...</div>
+        </div>
+
+        <!-- MODAL: SKINCARE -->
+        <div class="modal-window" id="modal-skincare">
+            <div class="modal-header">
+                <button class="back-btn" onclick="closeModal('modal-skincare')">←</button>
+                <h2>Skincare Optimizado</h2>
+            </div>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 12px;">Escribe los productos o materiales que tienes a tu alcance:</p>
+            <textarea class="input-box" id="skincare-materials" placeholder="Ej: Limpiador en gel, protector solar, crema hidratante..."></textarea>
+            <button class="btn-action" onclick="consultarIA('skincare')">Obtener Rutina Concreta</button>
+            <div class="ai-response-box hidden" id="res-skincare">Estableciendo rutina directa...</div>
+        </div>
+
+        <!-- MODAL: MASAJE FACIAL -->
+        <div class="modal-window" id="modal-masaje">
+            <div class="modal-header">
+                <button class="back-btn" onclick="closeModal('modal-masaje')">←</button>
+                <h2>Masaje Facial Escultor</h2>
+            </div>
+            
+            <!-- GUÍA VISUAL CON ICONOS E IMÁGENES INTEGRADAS -->
+            <div class="massage-visuals">
+                <div class="massage-img"><span>📐</span>Mandíbula<br>(Drenaje hacia oreja)</div>
+                <div class="massage-img"><span>💆</span>Pómulos<br>(Ascendente oblicuo)</div>
+                <div class="massage-img"><span>👁️</span>Contorno de Ojos<br>(Presión circular suave)</div>
+                <div class="massage-img"><span>🔲</span>Frente<br>(Descompresión vertical)</div>
             </div>
 
+            <button class="btn-action" onclick="consultarIA('masaje')">Obtener Secuencia de Órdenes</button>
+            <div class="ai-response-box hidden" id="res-masaje">Cargando comandos tácticos faciales...</div>
         </div>
     </div>
-</div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { GoogleGenAI } from "https://esm.run/@google/genai";
+    <!-- SCRIPTS CONFIGURADOS E INTEGRADOS -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { GoogleGenAI } from "https://esm.run/@google/genai";
 
-    const firebaseConfig = {
-  apiKey: "AIzaSyCiWB0_YUk_Ug2amavoATZ3BQ4C1J6Rh80",
-  authDomain: "looksai-da317.firebaseapp.com",
-  projectId: "looksai-da317",
-  storageBucket: "looksai-da317.appspot.com",
-  messagingSenderId: "39982623248",
-  appId: "1:39982623248:web:bc1684564c8d7ba1571d15"
-};
-    
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        // Firebase config optimizada y corregida
+        const firebaseConfig = {
+            apiKey: "AIzaSyCiWB0_YUk_Ug2amavoATZ3BQ4C1J6Rh80",
+            authDomain: "looksai-da317.firebaseapp.com",
+            projectId: "looksai-da317",
+            storageBucket: "looksai-da317.appspot.com",
+            messagingSenderId: "39982623248",
+            appId: "1:39982623248:web:bc1684564c8d7ba1571d15"
+        };
 
-    const API_KEY = "AQ.Ab8RN6JrYB9krnwQNsua1mzUWr4SnG9Ur06Z3Y2pI7TXjVs9fQ";
-    const ai = new GoogleGenAI({ apiKey: API_KEY });
-    
-    let base64Image = null;
-    let isSignUpMode = false;
-    let currentUser = null;
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    window.toggleAuthMode = function() {
-        isSignUpMode = !isSignUpMode;
-        document.getElementById('auth-title').innerText = isSignUpMode ? "Crear Cuenta" : "Iniciar Sesión";
-        document.getElementById('btn-auth-submit').innerText = isSignUpMode ? "Registrarse" : "Entrar";
-    }
+        // Clave e Instancia Gemini
+        const API_KEY = "AQ.Ab8RN6JrYB9krnwQNsua1mzUwr4SnG9Ur06Z3Y2pI7TXjVs9fQ";
+        const ai = new GoogleGenAI({ apiKey: API_KEY });
 
-    window.handleAuth = async function() {
-        const email = document.getElementById('auth-email').value;
-        const password = document.getElementById('auth-password').value;
-        try {
-            if(isSignUpMode) {
-                await createUserWithEmailAndPassword(auth, email, password);
-                alert("Cuenta creada correctamente.");
-            } else {
-                await signInWithEmailAndPassword(auth, email, password);
+        // VARIABLES DE CONTROL LOCAL
+        let currentWater = 0;
+        let waterGoal = 10;
+
+        // SIDEBAR & MODALES
+        window.toggleSidebar = function() {
+            document.getElementById('sidebar-menu').classList.toggle('active');
+        }
+
+        window.openModal = function(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        window.closeModal = function(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // AGUA INTERACTIVA COMPORTAMIENTO
+        window.drinkWater = function() {
+            if (currentWater < waterGoal) {
+                currentWater++;
+                updateWaterUI();
             }
-        } catch (error) { alert("Error: " + error.message); }
-    }
-
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            currentUser = user;
-            document.getElementById('menu-btn').style.display = 'flex';
-            const docSnap = await getDoc(doc(db, "users", user.uid));
-            if(docSnap.exists() && docSnap.data().hasPhoto) { navigateTo('plan'); } 
-            else { navigateTo('inicio'); }
-        } else {
-            currentUser = null;
-            document.getElementById('menu-btn').style.display = 'none';
-            document.querySelectorAll('.route-window').forEach(win => win.style.display = 'none');
-            document.getElementById('win-auth').style.display = 'block';
         }
-    });
 
-    window.logoutUser = function() { signOut(auth); }
-
-    window.loadPhoto = function(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('preview').src = e.target.result;
-            document.getElementById('preview').style.display = "block";
-            document.getElementById('placeholder').style.display = "none";
-            base64Image = e.target.result.split(',')[1];
+        window.updateWaterGoal = function() {
+            const inputVal = parseInt(document.getElementById('input-water-goal').value);
+            if (inputVal > 0) {
+                waterGoal = inputVal;
+                if (currentWater > waterGoal) currentWater = waterGoal;
+                updateWaterUI();
+            }
         }
-        reader.readAsDataURL(file);
-    }
 
-    window.analyzePhotoWithAI = async function() {
-        const outputDiv = document.getElementById('ai-output');
-        if (!base64Image) return alert("Sube una foto primero.");
-        outputDiv.style.display = "block"; outputDiv.innerHTML = "Analizando facciones...";
-        
-        try {
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: [
-                    { inlineData: { mimeType: "image/jpeg", data: base64Image } },
-                    `Actúa como un estratega implacable de estética y looksmaxxing. Analiza esta foto facial de forma ultra directa y sincera. REGLAS: 1. PROHIBIDO caracteres de asteriscos (*). 2. Subtemas obligatorios estrictos en mayúsculas usando HTML: <b>⚠️ LO QUE TE AFECTA</b>, <b>⚡ LO QUE DEBE SER / ACCIONES HOY</b>, <b>🏁 CONCLUSIÓN</b>.`
-                ]
-            });
-            outputDiv.innerHTML = response.text;
-            document.getElementById('btn-save-progress').style.display = "flex";
-            localStorage.setItem('tempAiScore', Math.floor(Math.random() * 25) + 70);
-        } catch (error) { outputDiv.innerHTML = "Error de conexión."; }
-    }
-
-    window.saveProgressAndGo = async function() {
-        if(currentUser) { await setDoc(doc(db, "users", currentUser.uid), { hasPhoto: true }, { merge: true }); }
-        navigateTo('plan');
-    }
-</script>
-
-<script>
-    let currentGlasses = 0;
-    let loggedHistory = localStorage.getItem('looksAiHistory') ? JSON.parse(localStorage.getItem('looksAiHistory')) : {};
-
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-
-    function navigateTo(windowId) {
-        document.getElementById('sidebar').classList.remove('open');
-        document.querySelectorAll('.route-window').forEach(win => win.style.display = 'none');
-        if(document.getElementById('win-' + windowId)) document.getElementById('win-' + windowId).style.display = 'block';
-        if(windowId === 'cronologia') renderCalendar();
-    }
-
-    function toggleWater(glassNum) {
-        currentGlasses = glassNum;
-        document.getElementById('water-count-txt').innerText = `${currentGlasses} / 10 Vasos`;
-    }
-
-    function finalizeDayMetrics() {
-        const todayStr = new Date().getDate();
-        loggedHistory[todayStr] = { day: todayStr, score: localStorage.getItem('tempAiScore') || "85", water: currentGlasses };
-        localStorage.setItem('looksAiHistory', JSON.stringify(loggedHistory));
-        alert("Guardado."); navigateTo('cronologia');
-    }
-
-    function renderCalendar() {
-        const container = document.getElementById('calendar-element'); container.innerHTML = '';
-        for (let i = 1; i <= 30; i++) {
-            let cell = `<div>${i}</div>`;
-            if (loggedHistory[i]) cell += `<div class="score-tag">${loggedHistory[i].score}%</div>`;
-            container.innerHTML += `<div class="calendar-day ${loggedHistory[i]?'has-data':''}">${cell}</div>`;
+        function updateWaterUI() {
+            document.getElementById('water-label').innerText = `${currentWater} / ${waterGoal} Vasos`;
+            const percentage = (currentWater / waterGoal) * 100;
+            document.getElementById('glass-water-level').style.height = `${percentage}%`;
         }
-    }
-</script>
-</body>
-</html>
+
+        // CONTROL DE TEMA FUNCIONAL (CLARO / OSCURO)
+        window.toggleTheme = function() {
+            const isDark = document.getElementById('theme-toggle').checked;
+            if (isDark) {
+                document.documentElement.removeAttribute('data-theme');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        }
+
+        // CONSULTA REESTRUCTURADA E IMPERATIVA PARA LA IA (JINPACHI EGO STYLE)
+        window.consultarIA = async function(tipo) {
+            const outputBox = document.getElementById(`res-${tipo}`);
+            outputBox.classList.remove('hidden');
+            outputBox.innerText = "Pensando críticamente...";
+
+            let promptBase = "Actúa bajo la filosofía de Jinpachi Ego de Blue Lock: sé directo, ultra sincero, estricto y sin rodeos. Sé tibio y sincero conmigo. Prohíbo textos largos explicativos. Tu respuesta debe estructurarse estrictamente así:\n1. COSAS MALAS (Lista compacta)\n2. COSAS BUENAS (Lista compacta)\n3. CONCLUSIÓN Y PASOS INMEDIATOS A REALIZAR (Lista numerada imperativa con órdenes claras).\n\n";
+
+            if (tipo === 'alimentacion') {
+                const mat = document.getElementById('diet-materials').value;
+                promptBase += `El usuario tiene estos materiales e ingredientes para comer: "${mat}". Dale órdenes tajantes de qué comida preparar paso a paso para maximizar masa muscular o mantener definición sin sodio dañino.`;
+            } else if (tipo === 'skincare') {
+                const mat = document.getElementById('skincare-materials').value;
+                promptBase += `El usuario dispone de estos productos de
