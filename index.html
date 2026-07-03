@@ -556,34 +556,88 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCiWB0_YUk_Ug2amavoATZ3BQ4C1J6Rh80",
-            authDomain: "looksai-da317.firebaseapp.com",
-            projectId: "looksai-da317",
-            storageBucket: "looksai-da317.firebasestorage.app",
-            messagingSenderId: "39982623248",
-            appId: "1:39982623248:web:bc1684564c8d7ba1571d15"
-        };
+// Tu configuración de Firebase (Asegúrate de que esta API Key sea la correcta de tu consola)
+const firebaseConfig = {
+    apiKey: "AIzaSyCiWB0_YUk_Ug2amavoATZ3BQ4C1J6Rh80", 
+    authDomain: "looksai-da317.firebaseapp.com",
+    projectId: "looksai-da317",
+    storageBucket: "looksai-da317.firebasestorage.app",
+    messagingSenderId: "39982623248",
+    appId: "1:39982623248:web:bc1684564c8d7ba1571d15"
+};
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-        const GEMINI_API_KEY = "AQ.Ab8RN6JrYB9krnwQNsua1mzUwr4SnG9Ur06Z3Y2pI7TXjVs9fQ";
+let isSignUpMode = true; // Por defecto empezamos en CREAR CUENTA
 
-        let isSignUpMode = true;
-        let waterGoal = 10;
+// Función interna y segura para cambiar entre Registrarse e Iniciar Sesión
+const toggleAuthMode = () => {
+    isSignUpMode = !isSignUpMode;
+    const title = document.getElementById('auth-title');
+    const submitBtn = document.getElementById('btn-auth-submit');
+    const toggleText = document.getElementById('auth-toggle-text');
 
-        // Cambiar entre registrarse e iniciar sesión
-        const toggleAuthMode = () => {
-            isSignUpMode = !isSignUpMode;
-            const title = document.getElementById('auth-title');
-            const submitBtn = document.getElementById('btn-auth-submit');
-            const toggleText = document.getElementById('auth-toggle-text');
+    if (isSignUpMode) {
+        title.innerText = "CREAR CUENTA";
+        submitBtn.innerText = "REGISTRARSE";
+        toggleText.innerText = "¿Ya tienes cuenta? Inicia Sesión";
+    } else {
+        title.innerText = "INICIAR SESIÓN";
+        submitBtn.innerText = "INGRESAR";
+        toggleText.innerText = "¿No tienes cuenta? Regístrate";
+    }
+};
 
-            if (isSignUpMode) {
-                title.innerText = "CREAR CUENTA";
-                submitBtn.innerText = "REGISTRARS
+// Función para procesar el formulario
+const handleAuthSubmit = async () => {
+    const email = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value;
+
+    if (!email || !password) {
+        alert("Por favor, rellena todos los campos.");
+        return;
+    }
+
+    try {
+        if (isSignUpMode) {
+            await createUserWithEmailAndPassword(auth, email, password);
+            alert("Usuario registrado con éxito.");
+        } else {
+            await signInWithEmailAndPassword(auth, email, password);
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Error de Autenticación: " + error.message);
+    }
+};
+
+// Observador del estado de autenticación (Cambia de ventana automáticamente)
+onAuthStateChanged(auth, (user) => {
+    const authWin = document.getElementById('win-auth');
+    const ajusteWin = document.getElementById('win-ajuste');
+
+    if (user) {
+        if (authWin) authWin.classList.remove('active');
+        if (ajusteWin) ajusteWin.classList.add('active');
+    } else {
+        if (ajusteWin) ajusteWin.classList.remove('active');
+        if (authWin) authWin.classList.add('active');
+    }
+});
+
+// ASIGNACIÓN DIRECTA DE EVENTOS (Previene fallos de onclick globales)
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById('auth-toggle-text');
+    const submitBtn = document.getElementById('btn-auth-submit');
+    const logoutBtn = document.getElementById('btn-logout');
+
+    if (toggleBtn) toggleBtn.addEventListener('click', toggleAuthMode);
+    if (submitBtn) submitBtn.addEventListener('click', handleAuthSubmit);
+    if (logoutBtn) logoutBtn.addEventListener('click', () => signOut(auth));
+});
+        
