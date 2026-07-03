@@ -62,7 +62,7 @@
 
         header {
             display: flex;
-            justify-content: space-between;
+            justify-between: space-between;
             align-items: center;
             margin-bottom: 25px;
             padding: 10px 0;
@@ -151,44 +151,33 @@
             outline: none;
         }
 
+        .habit-container-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
         .habit-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px;
+            padding: 16px;
             background: rgba(255,255,255,0.02);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-bottom: 10px;
-        }
-
-        .action-button-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-            margin-top: 10px;
-        }
-
-        .btn-panel {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
             border-radius: 14px;
-            padding: 16px;
-            color: var(--text-main);
-            font-weight: 600;
-            font-size: 16px;
-            text-align: left;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             cursor: pointer;
-            transition: transform 0.1s, background-color 0.2s;
+            transition: background-color 0.2s;
         }
-        [data-theme="light"] .btn-panel { background: rgba(0, 0, 0, 0.02); }
-        .btn-panel:active { transform: scale(0.98); }
-        .btn-panel::after { content: "→"; color: var(--text-muted); font-weight: bold; }
+        .habit-row:hidden { display: none; }
+        .habit-row:active { background: rgba(255,255,255,0.05); }
+
+        .habit-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
 
         .btn-main-action {
             width: 100%;
@@ -229,7 +218,6 @@
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 8px;
-            margin: 5px 0 15px 0;
             width: 100%;
         }
 
@@ -257,7 +245,6 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            margin-top: 5px;
         }
 
         .glass-fluid {
@@ -342,7 +329,7 @@
             border: 1px solid var(--border-color);
         }
 
-        /* MODALES REALES */
+        /* MODALES PANTALLA COMPLETA */
         .modal-window {
             position: fixed;
             top: 0;
@@ -398,7 +385,6 @@
             border-radius: 12px;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .ai-response-box {
@@ -471,23 +457,19 @@
                 <div class="card">
                     <div class="card-title">🎯 Plan de Ajuste Estético</div>
                     
-                    <div class="habit-row">
-                        <span>😈 Masaje Facial</span>
-                        <input type="checkbox" id="chk-masaje">
-                    </div>
-                    <div class="habit-row">
-                        <span>☀️ Skincare</span>
-                        <input type="checkbox" id="chk-skincare">
-                    </div>
-                    <div class="habit-row">
-                        <span>🥗 Cero Sodio</span>
-                        <input type="checkbox" id="chk-sodio">
-                    </div>
-
-                    <div class="action-button-list">
-                        <button class="btn-panel" id="btn-open-alimentacion">🥗 Alimentación Eficiente</button>
-                        <button class="btn-panel" id="btn-open-skincare">☀️ Skincare de Alto Impacto</button>
-                        <button class="btn-panel" id="btn-open-masaje">💆 Masaje Facial Escultor</button>
+                    <div class="habit-container-box">
+                        <div class="habit-row" id="row-masaje">
+                            <div class="habit-info"><span>😈</span> Masaje Facial</div>
+                            <input type="checkbox" id="chk-masaje" onclick="event.stopPropagation();">
+                        </div>
+                        <div class="habit-row" id="row-skincare">
+                            <div class="habit-info"><span>☀️</span> Skincare</div>
+                            <input type="checkbox" id="chk-skincare" onclick="event.stopPropagation();">
+                        </div>
+                        <div class="habit-row" id="row-alimentacion">
+                            <div class="habit-info"><span>🥗</span> Cero Sodio / Alimentación</div>
+                            <input type="checkbox" id="chk-sodio" onclick="event.stopPropagation();">
+                        </div>
                     </div>
 
                     <div class="water-section">
@@ -589,4 +571,18 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const GEMINI_API_KEY = "AQ.Ab8RN6J
+        const GEMINI_API_KEY = "AQ.Ab8RN6JrYB9krnwQNsua1mzUwr4SnG9Ur06Z3Y2pI7TXjVs9fQ";
+
+        let isSignUpMode = true;
+        let waterGoal = 10;
+
+        // Cambiar entre registrarse e iniciar sesión
+        const toggleAuthMode = () => {
+            isSignUpMode = !isSignUpMode;
+            const title = document.getElementById('auth-title');
+            const submitBtn = document.getElementById('btn-auth-submit');
+            const toggleText = document.getElementById('auth-toggle-text');
+
+            if (isSignUpMode) {
+                title.innerText = "CREAR CUENTA";
+                submitBtn.innerText = "REGISTRARS
