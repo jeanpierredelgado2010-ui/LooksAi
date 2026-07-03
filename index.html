@@ -16,6 +16,7 @@
             --text-main: #ffffff;
             --text-muted: #64748b;
             --border-color: #1e293b;
+            --input-bg: rgba(255, 255, 255, 0.05);
         }
 
         [data-theme="light"] {
@@ -27,6 +28,7 @@
             --text-main: #0f172a;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
+            --input-bg: rgba(0, 0, 0, 0.05);
         }
 
         * {
@@ -43,6 +45,7 @@
             transition: background-color 0.3s, color 0.3s;
             display: flex;
             justify-content: center;
+            min-height: 100vh;
         }
 
         .app-container {
@@ -51,9 +54,10 @@
             min-height: 100vh;
             padding: 20px;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* HEADER */
         header {
             display: flex;
             justify-content: space-between;
@@ -78,39 +82,7 @@
             padding: 5px;
         }
 
-        /* MENU DESPLEGABLE */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 280px;
-            height: 100%;
-            background-color: var(--card-bg);
-            border-left: 1px solid var(--border-color);
-            z-index: 100;
-            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 30px 20px;
-            box-shadow: -5px 0 25px rgba(0,0,0,0.5);
-        }
-
-        .sidebar.active { right: 0; }
-
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        /* CARD PRINCIPAL */
+        /* CARD Y CONTENEDORES */
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -131,7 +103,56 @@
             gap: 8px;
         }
 
-        /* BOTONES DE AJUSTE */
+        /* ROUTE WINDOWS (PANTALLAS) */
+        .route-window {
+            display: none;
+            width: 100%;
+        }
+        .route-window.active {
+            display: block;
+        }
+
+        /* FORMULARIOS DE AUTENTICACIÓN */
+        .auth-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .auth-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .input-field {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        /* BOTONES DEL PANEL DE AJUSTE */
         .action-button-list {
             display: flex;
             flex-direction: column;
@@ -160,7 +181,7 @@
         .btn-panel:active { transform: scale(0.98); }
         .btn-panel::after { content: "→"; color: var(--text-muted); font-weight: bold; }
 
-        /* AGUA INTERACTIVA */
+        /* VASO DE AGUA INTERACTIVO */
         .water-section {
             display: flex;
             flex-direction: column;
@@ -188,7 +209,6 @@
             overflow: hidden;
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
-        [data-theme="light"] .glass-container { border-color: var(--text-main); }
 
         .glass-fluid {
             position: absolute;
@@ -210,7 +230,37 @@
             pointer-events: none;
         }
 
-        /* AJUSTES DENTRO DEL MENU */
+        /* SIDEBAR (AJUSTES) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100%;
+            background-color: var(--card-bg);
+            border-left: 1px solid var(--border-color);
+            z-index: 200;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 20px;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+        }
+        .sidebar.active { right: 0; }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
         .setting-item {
             margin-bottom: 25px;
         }
@@ -223,7 +273,7 @@
         }
         .setting-item input[type="number"] {
             width: 100%;
-            background: rgba(255,255,255,0.05);
+            background: var(--input-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 12px;
@@ -231,7 +281,6 @@
             font-size: 16px;
             font-weight: bold;
         }
-        [data-theme="light"] .setting-item input[type="number"] { background: rgba(0,0,0,0.05); color: var(--text-main); }
 
         .theme-switch {
             display: flex;
@@ -244,7 +293,7 @@
         }
         [data-theme="light"] .theme-switch { background: rgba(0,0,0,0.02); }
 
-        /* VENTANAS MODALES INTERNAS */
+        /* VENTANAS MODALES */
         .modal-window {
             position: fixed;
             top: 0;
@@ -252,7 +301,7 @@
             width: 100%;
             height: 100%;
             background-color: var(--bg-color);
-            z-index: 150;
+            z-index: 250;
             display: none;
             padding: 20px;
             overflow-y: auto;
@@ -286,9 +335,9 @@
             margin-bottom: 15px;
             resize: none;
             height: 100px;
+            outline: none;
         }
 
-        /* IMPERATIVO BOTON */
         .btn-action {
             width: 100%;
             background-color: var(--accent-ai);
@@ -302,7 +351,6 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .btn-action:active { transform: scale(0.99); }
 
         .ai-response-box {
             margin-top: 20px;
@@ -313,9 +361,8 @@
             font-size: 15px;
             line-height: 1.5;
         }
-        [data-theme="light"] .ai-response-box { background: rgba(0,0,0,0.01); }
 
-        /* DISEÑO DE IMÁGENES MASAJES */
+        /* IMÁGENES MASAJE */
         .massage-visuals {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -340,7 +387,7 @@
         }
         .massage-img span { font-size: 24px; margin-bottom: 4px; }
 
-        /* ELEMENTOS GENERALES */
+        /* BOTONES DEL DASHBOARD */
         .btn-main-action {
             width: 100%;
             background-color: #c084fc;
@@ -364,7 +411,6 @@
             font-size: 15px;
             cursor: pointer;
         }
-        [data-theme="light"] .btn-secondary-action { background: rgba(0,0,0,0.05); }
 
         .hidden { display: none; }
     </style>
@@ -372,36 +418,61 @@
 <body>
 
     <div class="app-container">
-        <!-- HEADER -->
-        <header>
-            <div class="logo">LOOKSAI</div>
-            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        </header>
-
-        <!-- DASHBOARD PRINCIPAL -->
-        <main id="dashboard">
-            <div class="card">
-                <div class="card-title">🎯 Plan de Ajuste Estético</div>
+        
+        <!-- PANTALLA 1: AUTENTICACIÓN (LOGIN/SIGNUP) -->
+        <div id="win-auth" class="route-window active">
+            <div class="auth-container">
+                <div class="auth-title" id="auth-title">CREAR CUENTA</div>
                 
-                <div class="action-button-list">
-                    <button class="btn-panel" onclick="openModal('modal-alimentacion')">🥗 Alimentación Eficiente</button>
-                    <button class="btn-panel" onclick="openModal('modal-skincare')">☀️ Skincare de Alto Impacto</button>
-                    <button class="btn-panel" onclick="openModal('modal-masaje')">💆 Masaje Facial Escultor</button>
-                </div>
-
-                <!-- AGUA INTERACTIVA -->
-                <div class="water-section">
-                    <div class="water-counter" id="water-label">0 / 10 Vasos</div>
-                    <div class="glass-container" onclick="drinkWater()">
-                        <div class="glass-fluid" id="glass-water-level"></div>
-                        <div class="glass-reflection"></div>
+                <div class="card">
+                    <div class="input-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="auth-email" class="input-field" placeholder="ejemplo@correo.com">
                     </div>
+                    <div class="input-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="auth-password" class="input-field" placeholder="••••••••">
+                    </div>
+                    
+                    <button class="btn-main-action" id="btn-auth-submit" onclick="handleAuthSubmit()">REGISTRARSE</button>
+                    <p style="text-align: center; font-size: 14px; cursor: pointer; color: var(--accent-ai); margin-top: 10px;" 
+                       onclick="toggleAuthMode()" id="auth-toggle-text">¿Ya tienes cuenta? Inicia Sesión</p>
                 </div>
-
-                <button class="btn-main-action">🏳️ Archivar Métricas</button>
-                <button class="btn-secondary-action" style="margin-top: 8px;">🔄 Actualizar Foto / Nuevo Escaneo</button>
             </div>
-        </main>
+        </div>
+
+        <!-- PANTALLA 2: DASHBOARD PRINCIPAL (LOOKSAI) -->
+        <div id="win-dashboard" class="route-window">
+            <header>
+                <div class="logo">LOOKSAI</div>
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            </header>
+
+            <main>
+                <div class="card">
+                    <div class="card-title">🎯 Plan de Ajuste Estético</div>
+                    
+                    <div class="action-button-list">
+                        <button class="btn-panel" onclick="openModal('modal-alimentacion')">🥗 Alimentación Eficiente</button>
+                        <button class="btn-panel" onclick="openModal('modal-skincare')">☀️ Skincare de Alto Impacto</button>
+                        <button class="btn-panel" onclick="openModal('modal-masaje')">💆 Masaje Facial Escultor</button>
+                    </div>
+
+                    <!-- AGUA INTERACTIVA -->
+                    <div class="water-section">
+                        <div class="water-counter" id="water-label">0 / 10 Vasos</div>
+                        <div class="glass-container" onclick="drinkWater()">
+                            <div class="glass-fluid" id="glass-water-level"></div>
+                            <div class="glass-reflection"></div>
+                        </div>
+                    </div>
+
+                    <button class="btn-main-action">🏳️ Archivar Métricas</button>
+                    <button class="btn-secondary-action" style="margin-top: 8px;">🔄 Actualizar Foto / Nuevo Escaneo</button>
+                    <button class="btn-secondary-action" style="margin-top: 8px; background-color: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444;" onclick="handleLogout()">Cerrar Sesión</button>
+                </div>
+            </main>
+        </div>
 
         <!-- AJUSTES (SIDEBAR) -->
         <div class="sidebar" id="sidebar-menu">
@@ -433,7 +504,7 @@
             <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 12px;">Escribe los insumos o ingredientes que tienes disponibles en este momento:</p>
             <textarea class="input-box" id="diet-materials" placeholder="Ej: Pechuga de pollo, arroz, huevos, aguacate..."></textarea>
             <button class="btn-action" onclick="consultarIA('alimentacion')">Generar Comida Saludable</button>
-            <div class="ai-response-box hidden" id="res-alimentacion">Generando ordenes precisas...</div>
+            <div class="ai-response-box hidden" id="res-alimentacion">Generando órdenes precisas...</div>
         </div>
 
         <!-- MODAL: SKINCARE -->
@@ -467,14 +538,13 @@
         </div>
     </div>
 
-    <!-- SCRIPTS ENLAZADOS CORRECTAMENTE AL ENTORNO GLOBAL WINDOW -->
+    <!-- CONTROL TOTAL JAVASCRIPT GLOBAL -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { GoogleGenAI } from "https://esm.run/@google/genai";
 
-        // Firebase config
+        // Firebase Config corregida
         const firebaseConfig = {
             apiKey: "AIzaSyCiWB0_YUk_Ug2amavoATZ3BQ4C1J6Rh80",
             authDomain: "looksai-da317.firebaseapp.com",
@@ -488,68 +558,19 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Instancia Gemini
-        const API_KEY = "AQ.Ab8RN6JrYB9krnwQNsua1mzUwr4SnG9Ur06Z3Y2pI7TXjVs9fQ";
-        const ai = new GoogleGenAI({ apiKey: API_KEY });
+        // Clave e Instancia Gemini (Llamada HTTP Directa Segura)
+        const GEMINI_API_KEY = "AQ.Ab8RN6JrYB9krnwQNsua1mzUwr4SnG9Ur06Z3Y2pI7TXjVs9fQ";
 
-        // Variables locales de control
-        let currentWater = 0;
-        let waterGoal = 10;
+        // CONTROL DE ESTADOS DE AUTENTICACIÓN
+        let isSignUpMode = true;
 
-        // PUENTE GLOBAL: Mapeamos explícitamente las funciones a 'window' para que funcionen los 'onclick' del HTML
-        window.toggleSidebar = function() {
-            document.getElementById('sidebar-menu').classList.toggle('active');
-        };
+        window.toggleAuthMode = function() {
+            isSignUpMode = !isSignUpMode;
+            const title = document.getElementById('auth-title');
+            const submitBtn = document.getElementById('btn-auth-submit');
+            const toggleText = document.getElementById('auth-toggle-text');
 
-        window.openModal = function(id) {
-            document.getElementById(id).classList.add('active');
-        };
-
-        window.closeModal = function(id) {
-            document.getElementById(id).classList.remove('active');
-        };
-
-        window.drinkWater = function() {
-            if (currentWater < waterGoal) {
-                currentWater++;
-                updateWaterUI();
-            }
-        };
-
-        window.updateWaterGoal = function() {
-            const inputVal = parseInt(document.getElementById('input-water-goal').value);
-            if (inputVal > 0) {
-                waterGoal = inputVal;
-                if (currentWater > waterGoal) currentWater = waterGoal;
-                updateWaterUI();
-            }
-        };
-
-        window.toggleTheme = function() {
-            const isDark = document.getElementById('theme-toggle').checked;
-            if (isDark) {
-                document.documentElement.removeAttribute('data-theme');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-            }
-        };
-
-        function updateWaterUI() {
-            document.getElementById('water-label').innerText = `${currentWater} / ${waterGoal} Vasos`;
-            const percentage = (currentWater / waterGoal) * 100;
-            document.getElementById('glass-water-level').style.height = `${percentage}%`;
-        }
-
-        window.consultarIA = async function(tipo) {
-            const outputBox = document.getElementById(`res-${tipo}`);
-            outputBox.classList.remove('hidden');
-            outputBox.innerText = "Pensando críticamente...";
-
-            let promptBase = "Actúa bajo la filosofía de Jinpachi Ego de Blue Lock: sé directo, ultra sincero, estricto y sin rodeos. Sé tibio y sincero conmigo. Prohíbo textos largos explicativos. Tu respuesta debe estructurarse estrictamente así:\n1. COSAS MALAS (Lista compacta)\n2. COSAS BUENAS (Lista compacta)\n3. CONCLUSIÓN Y PASOS INMEDIATOS A REALIZAR (Lista numerada imperativa con órdenes claras).\n\n";
-
-            if (tipo === 'alimentacion') {
-                const mat = document.getElementById('diet-materials').value;
-                promptBase += `El usuario tiene estos materiales e ingredientes para comer: "${mat}". Dale órdenes tajantes de qué comida preparar paso a paso para maximizar masa muscular o mantener definición sin sodio dañino.`;
-            } else if (tipo === 'skincare') {
-                const mat = document.getElementById('skincare-materials').value;
-                promptBase += `El usuario dispone de estos productos de skincare: "${mat}". Dictamina el orden estricto de aplicación en una rutina sin rodeos innecesa
+            if (isSignUpMode) {
+                title.innerText = "CREAR CUENTA";
+                submitBtn.innerText = "REGISTRARSE";
+                toggleText.innerText = "¿Ya tienes cuenta? Inici
